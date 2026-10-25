@@ -1,5 +1,7 @@
 """Cliente de AdoptaBot sobre la API de Claude (Anthropic)."""
 
+from __future__ import annotations
+
 import os
 from collections.abc import Iterator
 

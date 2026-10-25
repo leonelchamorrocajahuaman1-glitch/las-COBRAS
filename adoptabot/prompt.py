@@ -1,5 +1,7 @@
 """Master prompt de AdoptaBot (Las Cobras)."""
 
+from __future__ import annotations
+
 import json
 from pathlib import Path
 
