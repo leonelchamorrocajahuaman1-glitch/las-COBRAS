@@ -3,14 +3,24 @@
 Ejecutar:  streamlit run app.py
 """
 
+import sys
+import traceback
+
 import streamlit as st
 from dotenv import load_dotenv
 
-from adoptabot import MENSAJE_BIENVENIDA, AdoptaBot
+st.set_page_config(page_title="AdoptaBot · Las Cobras", page_icon="🐾", layout="centered")
+
+# Streamlit Cloud oculta el detalle de los errores; aquí se muestra completo para poder diagnosticarlo.
+try:
+    from adoptabot import MENSAJE_BIENVENIDA, AdoptaBot
+except Exception:
+    st.error("No se pudo cargar AdoptaBot. Detalle técnico del error:")
+    st.code(f"Python {sys.version}\n\n{traceback.format_exc()}", language="text")
+    st.stop()
 
 load_dotenv()
 
-st.set_page_config(page_title="AdoptaBot · Las Cobras", page_icon="🐾", layout="centered")
 st.title("🐾 AdoptaBot")
 st.caption("Asistente de adopción responsable de **Las Cobras**")
 
