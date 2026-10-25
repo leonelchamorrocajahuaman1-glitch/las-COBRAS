@@ -5,12 +5,12 @@ Ejecutar:  python cli.py
 
 from dotenv import load_dotenv
 
-from adoptabot import MENSAJE_BIENVENIDA, AdoptaBot
+from adoptabot import MENSAJE_BIENVENIDA, AdoptaBot, Repositorio, mensaje_de_error
 
 
 def main() -> None:
     load_dotenv()
-    bot = AdoptaBot()
+    bot = AdoptaBot(estado_de=Repositorio().estado_mascota)
     print(f"\nAdoptaBot: {MENSAJE_BIENVENIDA}\n")
     print("(escribe 'salir' para terminar)\n")
     while True:
@@ -23,8 +23,11 @@ def main() -> None:
         if texto.lower() in {"salir", "exit", "quit"}:
             break
         print("AdoptaBot: ", end="", flush=True)
-        for parte in bot.responder_stream(texto):
-            print(parte, end="", flush=True)
+        try:
+            for tipo, dato in bot.conversar(texto):
+                print(dato if tipo == "texto" else f"\n  ({dato})\n", end="", flush=True)
+        except Exception as e:
+            print(mensaje_de_error(e), end="")
         print("\n")
     print("¡Hasta pronto! 🐾")
 
