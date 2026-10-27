@@ -1,23 +1,16 @@
 import csv
-import hmac
 import io
 
 import streamlit as st
 
 from adoptabot.catalogo import EMOJI_ESPECIE
-from adoptabot.interfaz import catalogo, repositorio, secreto
+from adoptabot.interfaz import catalogo, repositorio
+from adoptabot.seguridad import configurar_headers_seguridad, sanitizar_texto, validar_contrasena_admin
 from adoptabot.solicitudes import ESTADOS_MASCOTA, ESTADOS_SOLICITUD, ETIQUETAS_MASCOTA, ETIQUETAS_SOLICITUD
 
-st.title("🔒 Panel del refugio")
+configurar_headers_seguridad()
 
-clave_admin = secreto("ADMIN_PASSWORD")
-if not clave_admin:
-    st.info(
-        "Para activar el panel, define la contraseña `ADMIN_PASSWORD`:\n\n"
-        "- **En tu computadora:** agrega `ADMIN_PASSWORD=tu_clave` al archivo `.env`\n"
-        "- **En Streamlit Cloud:** *Manage app → Settings → Secrets* → `ADMIN_PASSWORD = \"tu_clave\"`"
-    )
-    st.stop()
+st.title("🔒 Panel del refugio")
 
 if not st.session_state.get("admin"):
     intentos = st.session_state.get("intentos_admin", 0)
@@ -25,13 +18,15 @@ if not st.session_state.get("admin"):
         st.error("Demasiados intentos fallidos. Recarga la página para intentarlo de nuevo.")
         st.stop()
     with st.form("login"):
-        clave = st.text_input("Contraseña del refugio", type="password")
+        clave = st.text_input("Contraseña del refugio", type="password", autocomplete="current-password")
         if st.form_submit_button("Entrar", type="primary"):
-            if hmac.compare_digest(clave.encode(), clave_admin.encode()):
+            if validar_contrasena_admin(clave):
                 st.session_state.admin = True
+                st.session_state.intentos_admin = 0
                 st.rerun()
             st.session_state.intentos_admin = intentos + 1
             st.error("Contraseña incorrecta.")
+    st.info("Configura `ADMIN_PASSWORD` en tu archivo `.env` para proteger el panel.")
     st.stop()
 
 repo = repositorio()

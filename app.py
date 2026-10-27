@@ -9,8 +9,26 @@ import traceback
 import streamlit as st
 from dotenv import load_dotenv
 
+from adoptabot.seguridad import configurar_headers_seguridad
+
 st.set_page_config(page_title="AdoptaBot · Las Cobras", page_icon="🐾", layout="wide")
 load_dotenv()
+configurar_headers_seguridad()
+
+# Mejora visual profesional
+st.markdown(
+    """
+    <style>
+    .stApp { background-color: #ffffff; }
+    [data-testid="stSidebar"] { background-color: #f8f9fa; border-right: 1px solid #e9ecef; }
+    h1, h2, h3 { color: #1a1a1a; font-weight: 600; }
+    .stButton > button { border-radius: 8px; font-weight: 500; }
+    .stTextInput > div > div > input, .stTextArea > div > div > textarea,
+    .stSelectbox > div > div > div { border-radius: 8px; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 # Streamlit Cloud oculta el detalle de los errores; aquí se muestra completo para poder diagnosticarlo.
 try:
