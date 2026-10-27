@@ -1,0 +1,3 @@
+anthropic>=0.80
+streamlit>=1.45
+python-dotenv>=1.0
