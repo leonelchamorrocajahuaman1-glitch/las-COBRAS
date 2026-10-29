@@ -1,11 +1,12 @@
 import streamlit as st
 
 from adoptabot.catalogo import EMOJI_ESPECIE
-from adoptabot.interfaz import catalogo, ir_a, repositorio
+from adoptabot.interfaz import barra_proceso, catalogo, ir_a, repositorio
 from adoptabot.solicitudes import ETIQUETAS_MASCOTA, SolicitudInvalida
 
 st.title("📝 Solicitud de adopción")
 st.caption("Completa el formulario. El equipo del refugio revisará tu solicitud y te contactará para una entrevista.")
+barra_proceso(2)
 
 repo = repositorio()
 estados = repo.estados_mascotas()

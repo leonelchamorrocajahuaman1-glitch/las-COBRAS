@@ -22,7 +22,8 @@ st.markdown(
     .stApp { background-color: #ffffff; }
     [data-testid="stSidebar"] { background-color: #f8f9fa; border-right: 1px solid #e9ecef; }
     h1, h2, h3 { color: #1a1a1a; font-weight: 600; }
-    .stButton > button { border-radius: 8px; font-weight: 500; }
+    .stButton > button { border-radius: 8px; font-weight: 500; min-height: 2.75rem; }
+    [data-testid="stMetric"] { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 0.6rem 0.9rem; }
     .stTextInput > div > div > input, .stTextArea > div > div > textarea,
     .stSelectbox > div > div > div { border-radius: 8px; }
     </style>
@@ -43,13 +44,13 @@ paginas = {
         st.Page(PAGINAS["inicio"], title="Inicio", icon="🏠", default=True),
         st.Page(PAGINAS["catalogo"], title="Catálogo", icon="🐾"),
         st.Page(PAGINAS["test"], title="Test de compatibilidad", icon="🧪"),
-        st.Page(PAGINAS["chat"], title="Chat con AdoptaBot", icon="💬"),
     ],
-    "Tu proceso": [
+    "Tu solicitud": [
         st.Page(PAGINAS["solicitud"], title="Solicitar adopción", icon="📝"),
         st.Page(PAGINAS["mi_solicitud"], title="Mi solicitud", icon="🔍"),
     ],
-    "Refugio": [
+    "Ayuda y equipo": [
+        st.Page(PAGINAS["chat"], title="Chat con AdoptaBot", icon="💬"),
         st.Page(PAGINAS["refugio"], title="Panel del refugio", icon="🔒"),
     ],
 }
@@ -57,5 +58,7 @@ paginas = {
 with st.sidebar:
     st.markdown("### Las Cobras ❤️")
     st.caption("Adopción responsable. **No vendemos animales.**")
+    st.divider()
+    st.caption("🧭 Ruta sugerida: Catálogo → Test → Solicitud → Entrevista")
 
 st.navigation(paginas).run()

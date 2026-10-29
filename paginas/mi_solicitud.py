@@ -1,10 +1,11 @@
 import streamlit as st
 
-from adoptabot.interfaz import repositorio
+from adoptabot.interfaz import barra_proceso, repositorio
 from adoptabot.solicitudes import ETIQUETAS_SOLICITUD
 
 st.title("🔍 Mi solicitud")
 st.caption("Consulta el estado de tu solicitud con el código que recibiste y tu DNI.")
+barra_proceso(3)
 
 with st.form("consulta"):
     c1, c2 = st.columns(2)

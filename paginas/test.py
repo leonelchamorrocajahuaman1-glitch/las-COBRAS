@@ -1,12 +1,14 @@
 import streamlit as st
 
 from adoptabot.catalogo import EMOJI_ESPECIE, Perfil, recomendar
-from adoptabot.interfaz import catalogo, ir_a, repositorio
+from adoptabot.interfaz import barra_proceso, catalogo, ir_a, repositorio
 
 st.title("🧪 Test de compatibilidad")
 st.caption("Responde 8 preguntas y te diremos qué mascotas encajan mejor con tu vida. Es gratis y no usa IA.")
+barra_proceso(1)
 
 with st.form("test"):
+    st.markdown("#### 1. Qué buscas")
     c1, c2 = st.columns(2)
     especie = c1.radio("¿Qué te gustaría adoptar?", ["Me da igual", "Perro", "Gato"], horizontal=True)
     vivienda = c2.radio("¿Dónde vives?", ["Departamento", "Casa sin patio", "Casa con patio"], horizontal=True)
@@ -15,7 +17,11 @@ with st.form("test"):
         options=["baja", "media", "alta"], value="media",
         format_func={"baja": "🛋️ Tranquila", "media": "🚶 Moderada", "alta": "🏃 Muy activa"}.get,
     )
+
+    st.markdown("#### 2. Tu rutina")
     horas = st.slider("¿Cuántas horas al día estaría sola la mascota?", 0, 12, 6)
+
+    st.markdown("#### 3. Tu hogar hoy")
     c3, c4, c5, c6 = st.columns(4)
     ninos = c3.checkbox("Hay niños en casa")
     perros = c4.checkbox("Tengo perros")
@@ -36,7 +42,9 @@ if perfil:
     adoptadas = {i for i, e in estados.items() if e == "adoptado"}
     resultados = recomendar(catalogo(), perfil, n=3, excluir_ids=adoptadas)
     st.subheader("Tus mejores coincidencias")
-    if not resultados:
+    if resultados:
+        st.info("Siguiente paso: elige una mascota y envía tu solicitud. El refugio te contactará para la entrevista.")
+    else:
         st.warning("Ahora no tenemos una mascota que encaje con tu perfil. ¡Vuelve pronto, llegan rescatados cada semana!")
     for i, r in enumerate(resultados):
         m = r.mascota
@@ -57,3 +65,13 @@ if perfil:
                     f"y la mascota estaría {perfil.horas_fuera} h sola. ¿Qué debo saber antes de adoptarlo?"
                 ))
     st.caption("El puntaje es orientativo. En la entrevista el equipo del refugio te ayudará a decidir.")
+
+    st.divider()
+    a1, a2, a3 = st.columns(3)
+    if a1.button("🐾 Ver todas las mascotas", use_container_width=True):
+        ir_a("catalogo")
+    if a2.button("💬 Hablar con AdoptaBot", use_container_width=True):
+        ir_a("chat")
+    if a3.button("🔁 Repetir el test", use_container_width=True):
+        st.session_state.pop("perfil", None)
+        st.rerun()

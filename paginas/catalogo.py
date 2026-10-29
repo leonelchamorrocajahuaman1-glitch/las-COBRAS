@@ -1,15 +1,22 @@
 import streamlit as st
 
 from adoptabot.catalogo import ETAPAS, TAMAÑOS, etapa, filtrar, tamaño_base
-from adoptabot.interfaz import catalogo, cuadricula, repositorio
+from adoptabot.interfaz import barra_proceso, catalogo, cuadricula, ir_a, repositorio
 
 st.title("🐾 Catálogo de mascotas")
 st.caption("Todos están vacunados según su edad, desparasitados y con historia conocida.")
+barra_proceso(0)
 
 mascotas = catalogo()
 estados = repositorio().estados_mascotas()
 
 with st.container(border=True):
+    encabezado, accion = st.columns([3, 1], vertical_alignment="center")
+    encabezado.markdown("#### Filtros")
+    encabezado.caption("¿No sabes a quién elegir? El test te orienta con 8 preguntas rápidas.")
+    if accion.button("🧪 Hacer el test", use_container_width=True):
+        ir_a("test")
+
     f1, f2, f3, f4 = st.columns([1.2, 1.4, 1.4, 1])
     especie = f1.radio("Especie", ["Todos", "Perros", "Gatos"], horizontal=True)
     tamaños = f2.multiselect("Tamaño", TAMAÑOS, format_func=str.capitalize)
@@ -39,3 +46,5 @@ if resultado:
     cuadricula(resultado, estados, prefijo="catalogo")
 else:
     st.warning("No hay mascotas con esos filtros. Prueba quitando alguno o pregúntale a AdoptaBot. 🐾")
+    if st.button("🧪 Hacer el test de compatibilidad", type="primary"):
+        ir_a("test")

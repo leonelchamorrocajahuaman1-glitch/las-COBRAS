@@ -22,6 +22,13 @@ PAGINAS = {
 COLOR_ESTADO = {"disponible": "green", "en_proceso": "orange", "adoptado": "violet"}
 ETIQUETA_ETAPA = {"cachorro": "Cachorro", "adulto": "Adulto", "senior": "Senior"}
 
+PASOS_PROCESO = (
+    ("1", "Conoce", "Catálogo e historias"),
+    ("2", "Test", "Tu compatibilidad"),
+    ("3", "Postula", "Envía tu solicitud"),
+    ("4", "Entrevista", "Visita y entrega"),
+)
+
 
 @st.cache_resource
 def repositorio() -> Repositorio:
@@ -50,6 +57,21 @@ def ir_a(pagina: str, **estado) -> None:
     for clave, valor in estado.items():
         st.session_state[clave] = valor
     st.switch_page(PAGINAS[pagina])
+
+
+def barra_proceso(actual: int) -> None:
+    """Guía visual del proceso de adopción; `actual` es el paso del usuario (0 a 3)."""
+    with st.container(border=True):
+        for i, (columna, (numero, titulo, detalle)) in enumerate(
+            zip(st.columns(len(PASOS_PROCESO)), PASOS_PROCESO)
+        ):
+            if i < actual:
+                columna.markdown(f":green-background[✅ {numero}. {titulo}]")
+            elif i == actual:
+                columna.markdown(f":blue-background[▶ {numero}. {titulo}]")
+            else:
+                columna.markdown(f":gray-background[{numero}. {titulo}]")
+            columna.caption(detalle)
 
 
 def insignia(texto: str, color: str = "gray") -> str:
