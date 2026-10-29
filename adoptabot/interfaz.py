@@ -16,6 +16,7 @@ PAGINAS = {
     "chat": "paginas/chat.py",
     "solicitud": "paginas/solicitud.py",
     "mi_solicitud": "paginas/mi_solicitud.py",
+    "guia": "paginas/guia.py",
     "refugio": "paginas/refugio.py",
 }
 

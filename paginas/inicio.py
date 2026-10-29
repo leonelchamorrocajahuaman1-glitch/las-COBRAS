@@ -31,12 +31,14 @@ for col, (icono, titulo, texto) in zip(pasos, [
         st.markdown(f"#### {icono} {titulo}")
         st.caption(texto)
 
-b1, b2, b3 = st.columns(3)
-if b1.button("🧪 Hacer el test de compatibilidad", type="primary", use_container_width=True):
+b1, b2, b3, b4 = st.columns(4)
+if b1.button("🧪 Hacer test", type="primary", use_container_width=True):
     ir_a("test")
-if b2.button("💬 Hablar con AdoptaBot", use_container_width=True):
+if b2.button("💡 Guía y Costos", use_container_width=True):
+    ir_a("guia")
+if b3.button("💬 AdoptaBot", use_container_width=True):
     ir_a("chat")
-if b3.button("🐾 Ver todas las mascotas", use_container_width=True):
+if b4.button("🐾 Ver mascotas", use_container_width=True):
     ir_a("catalogo")
 
 st.subheader("Te están esperando")

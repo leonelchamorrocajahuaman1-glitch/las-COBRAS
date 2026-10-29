@@ -43,6 +43,7 @@ paginas = {
         st.Page(PAGINAS["inicio"], title="Inicio", icon="🏠", default=True),
         st.Page(PAGINAS["catalogo"], title="Catálogo", icon="🐾"),
         st.Page(PAGINAS["test"], title="Test de compatibilidad", icon="🧪"),
+        st.Page(PAGINAS["guia"], title="Guía y Calculadora", icon="💡"),
         st.Page(PAGINAS["chat"], title="Chat con AdoptaBot", icon="💬"),
     ],
     "Tu proceso": [

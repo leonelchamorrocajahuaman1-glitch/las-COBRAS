@@ -9,6 +9,7 @@ App web de **adopción responsable de mascotas** para **Las Cobras**, hecha en P
 | 🏠 **Inicio** | Presentación, estadísticas del refugio, pasos para adoptar y mascotas destacadas | No |
 | 🐾 **Catálogo** | Fichas de cada mascota con filtros (especie, tamaño, edad, energía, apto para niños o departamento) e indicador de estado: disponible, en proceso o adoptado | No |
 | 🧪 **Test de compatibilidad** | 8 preguntas sobre tu estilo de vida → las 3 mascotas más compatibles (0-100 %) con sus motivos y alertas | No |
+| 💡 **Guía y Calculadora** | Calculadora de presupuesto mensual/anual, regla 3-3-3 de adaptación, checklist de bienvenida y preguntas frecuentes | No |
 | 💬 **Chat con AdoptaBot** | Asistente que consulta el catálogo **en tiempo real** con herramientas (*tool use*), recomienda según tu perfil y explica el proceso | Sí |
 | 📝 **Solicitar adopción** | Formulario validado (DNI, celular, compromiso de tenencia responsable). Entrega un **código de seguimiento** (ej. `LC-1A2B3C`) | No |
 | 🔍 **Mi solicitud** | Consulta el estado con tu código + DNI: recibida → entrevista → aprobada, y el mensaje del refugio | No |
@@ -34,11 +35,12 @@ Reglas que siempre cumple: no vende animales, no da diagnósticos veterinarios (
 las-COBRAS/
 ├── app.py                  # Punto de entrada: menú de páginas
 ├── paginas/                # Una página de Streamlit por archivo
-│   ├── inicio.py · catalogo.py · test.py · chat.py
+│   ├── inicio.py · catalogo.py · test.py · guia.py · chat.py
 │   ├── solicitud.py · mi_solicitud.py
 │   └── refugio.py          # Panel del refugio (con contraseña)
 ├── adoptabot/
 │   ├── bot.py              # Conversación con Claude: streaming + ciclo de herramientas
+│   ├── calculadora.py      # Estimación de presupuesto y costos de tenencia responsable
 │   ├── herramientas.py     # Definición y ejecución de las herramientas (con validación)
 │   ├── prompt.py           # Master prompt
 │   ├── catalogo.py         # Filtros y algoritmo de compatibilidad
