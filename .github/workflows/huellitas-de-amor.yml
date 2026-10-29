@@ -1,0 +1,57 @@
+name: Huellitas de Amor · probar y publicar
+
+# Prueba y publica en GitHub Pages la página web de la carpeta huellitas-de-amor/.
+# Solo se ejecuta cuando cambia esa carpeta (o este archivo), así no interfiere con AdoptaBot.
+on:
+  push:
+    branches: [main]
+    paths: ['huellitas-de-amor/**', '.github/workflows/huellitas-de-amor.yml']
+  pull_request:
+    paths: ['huellitas-de-amor/**', '.github/workflows/huellitas-de-amor.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: huellitas-de-amor
+
+jobs:
+  probar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: huellitas-de-amor/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - name: Comprobar que todas las fotos existen
+        run: npm run verificar-fotos
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: huellitas-de-amor/dist
+
+  publicar:
+    # Requiere activar GitHub Pages una vez: Settings → Pages → Source: "GitHub Actions"
+    if: github.event_name != 'pull_request'
+    needs: probar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4

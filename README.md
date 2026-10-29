@@ -109,3 +109,11 @@ python -m pytest
 ```
 
 Cubren el algoritmo de compatibilidad, los filtros, la validación del formulario, el flujo de estados (una mascota aprobada queda adoptada y no acepta nuevas solicitudes), la validación de las herramientas y el ciclo de herramientas del bot con un cliente falso, que no usa la API ni gasta saldo.
+
+---
+
+# 🐾 Huellitas de Amor (página web)
+
+En la carpeta [`huellitas-de-amor/`](huellitas-de-amor/) está la página web de adopción **Huellitas de Amor** (React + TypeScript + Vite + Tailwind CSS): catálogo de mascotas con búsqueda y filtros, ficha de cada mascota, formulario de adopción y de contacto, proceso de adopción, historias felices y sobre nosotros.
+
+Se publica sola en GitHub Pages: **https://leonelchamorrocajahuaman1-glitch.github.io/las-COBRAS/** (hay que activar Pages una vez en *Settings → Pages → Source: GitHub Actions*). Detalles en [`huellitas-de-amor/README.md`](huellitas-de-amor/README.md).

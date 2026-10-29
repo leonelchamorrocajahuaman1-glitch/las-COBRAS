@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Nunito Sans", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Nunito", ui-rounded, ui-sans-serif, system-ui, sans-serif;
+
+  /* Verde salvia (principal) */
+  --color-salvia-50: #f3f8f4;
+  --color-salvia-100: #e3efe6;
+  --color-salvia-200: #c7dfcd;
+  --color-salvia-300: #a0c8aa;
+  --color-salvia-400: #74ab82;
+  --color-salvia-500: #548f63;
+  --color-salvia-600: #3f7a52;
+  --color-salvia-700: #356b46;
+  --color-salvia-800: #2e4a36;
+  --color-salvia-900: #1f2a24;
+
+  /* Beige / crema */
+  --color-crema-50: #fdfbf7;
+  --color-crema-100: #f8f3ea;
+  --color-crema-200: #efe4d1;
+  --color-crema-300: #e2cfb0;
+
+  /* Naranja claro (acento). 600/700 cumplen contraste AA con texto blanco */
+  --color-durazno-100: #fde4d0;
+  --color-durazno-200: #fbc9a3;
+  --color-durazno-300: #f6a56f;
+  --color-durazno-400: #e8742f;
+  --color-durazno-600: #c2531a;
+  --color-durazno-700: #a8461a;
+
+  --color-tinta: #1f2a24;
+  --color-tinta-suave: #4a5a50;
+
+  --shadow-suave: 0 1px 2px rgb(31 42 36 / 0.04), 0 8px 24px -8px rgb(31 42 36 / 0.12);
+  --shadow-elevada: 0 2px 4px rgb(31 42 36 / 0.05), 0 18px 40px -12px rgb(31 42 36 / 0.22);
+
+  --animate-aparecer: aparecer 0.25s ease-out;
+  --animate-subir: subir 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes subir {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* compensa la barra fija al saltar a una sección */
+  }
+  body {
+    @apply bg-crema-50 font-sans text-tinta antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-tinta;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-durazno-600;
+  }
+}
+
+/* Aparición suave al hacer scroll (ver hooks/useRevelar.ts) */
+.revelar {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.revelar.visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .revelar { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
