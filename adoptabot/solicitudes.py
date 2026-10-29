@@ -21,6 +21,12 @@ ETIQUETAS_SOLICITUD = {
 }
 ETIQUETAS_MASCOTA = {"disponible": "Disponible", "en_proceso": "En proceso de adopción", "adoptado": "Adoptado ❤️"}
 
+# Límites razonables para los datos que se guardan y luego se muestran en la app.
+# Evitan que una única petición consuma espacio o memoria de forma desproporcionada.
+_MAX_LONGITUD = {"nombre": 100, "email": 254, "distrito": 100, "motivo": 2_000, "nota_refugio": 2_000}
+_CODIGO_RE = re.compile(r"LC-[A-F0-9]{6}")
+_DOCUMENTO_RE = re.compile(r"[A-Z0-9]{8,12}")
+
 _ESQUEMA = """
 CREATE TABLE IF NOT EXISTS solicitudes (
     id INTEGER PRIMARY KEY,
@@ -67,9 +73,13 @@ def validar(datos: dict) -> dict:
     limpio["documento"] = limpio["documento"].upper()
     limpio["telefono"] = re.sub(r"[\s-]", "", limpio["telefono"])
 
+    for campo, limite in _MAX_LONGITUD.items():
+        if campo in limpio and len(limpio[campo]) > limite:
+            raise SolicitudInvalida(f"{campo.capitalize()} no puede superar {limite} caracteres.")
+
     if len(limpio["nombre"]) < 5 or " " not in limpio["nombre"]:
         raise SolicitudInvalida("Escribe tu nombre y apellido.")
-    if not re.fullmatch(r"[A-Z0-9]{8,12}", limpio["documento"]):
+    if not _DOCUMENTO_RE.fullmatch(limpio["documento"]):
         raise SolicitudInvalida("El DNI o carné de extranjería debe tener de 8 a 12 letras o números.")
     if not re.fullmatch(r"(\+?51)?9\d{8}", limpio["telefono"]):
         raise SolicitudInvalida("El celular debe tener 9 dígitos y empezar con 9 (ej. 987654321).")
@@ -147,9 +157,15 @@ class Repositorio:
 
     def consultar(self, codigo: str, documento: str) -> dict | None:
         """Busca una solicitud; exige código y documento para no exponer datos de otras personas."""
+        codigo = str(codigo or "").strip().upper()
+        documento = str(documento or "").strip().upper()
+        # Rechazar formatos imposibles antes de consultar evita trabajo innecesario
+        # ante intentos automatizados y no revela si existe algún código.
+        if not _CODIGO_RE.fullmatch(codigo) or not _DOCUMENTO_RE.fullmatch(documento):
+            return None
         fila = self._con.execute(
             "SELECT * FROM solicitudes WHERE codigo = ? AND documento = ?",
-            (codigo.strip().upper(), documento.strip().upper()),
+            (codigo, documento),
         ).fetchone()
         return dict(fila) if fila else None
 
@@ -164,6 +180,9 @@ class Repositorio:
         """Cambia el estado de una solicitud y mantiene coherente el estado de la mascota."""
         if estado not in ESTADOS_SOLICITUD:
             raise ValueError(f"Estado inválido: {estado}")
+        nota = str(nota or "").strip()
+        if len(nota) > _MAX_LONGITUD["nota_refugio"]:
+            raise ValueError(f"El mensaje para el solicitante no puede superar {_MAX_LONGITUD['nota_refugio']} caracteres.")
         with self._lock, self._con:
             fila = self._con.execute("SELECT * FROM solicitudes WHERE codigo = ?", (codigo,)).fetchone()
             if not fila:
@@ -178,7 +197,7 @@ class Repositorio:
                     raise ValueError(f"{fila['mascota_nombre']} ya tiene otra solicitud aprobada ({otra['codigo']}).")
             self._con.execute(
                 "UPDATE solicitudes SET estado = ?, nota_refugio = ?, actualizada_en = ? WHERE codigo = ?",
-                (estado, nota.strip(), _ahora(), codigo),
+                (estado, nota, _ahora(), codigo),
             )
             # La mascota queda adoptada si hay una aprobada; en proceso si hay alguna en entrevista.
             activas = {f["estado"] for f in self._con.execute(
