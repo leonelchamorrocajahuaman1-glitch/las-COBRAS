@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="cabeza(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="AdoptaBot · Las Cobras: adopción responsable de mascotas rescatadas.">
+    <title th:text="|${titulo} · AdoptaBot Las Cobras|">AdoptaBot · Las Cobras</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<header th:fragment="navegacion(activa)" class="barra">
+    <a class="marca" th:href="@{/}">🐾 Las Cobras</a>
+    <nav aria-label="Navegación principal">
+        <a th:href="@{/}" th:classappend="${activa == 'inicio'} ? 'activo'">Inicio</a>
+        <a th:href="@{/catalogo}" th:classappend="${activa == 'catalogo'} ? 'activo'">Catálogo</a>
+        <a th:href="@{/test}" th:classappend="${activa == 'test'} ? 'activo'">Test</a>
+        <a th:href="@{/solicitud}" th:classappend="${activa == 'solicitud'} ? 'activo'">Solicitar adopción</a>
+        <a th:href="@{/mi-solicitud}" th:classappend="${activa == 'mi-solicitud'} ? 'activo'">Mi solicitud</a>
+    </nav>
+    <a class="enlace-refugio" th:href="@{/refugio}">🔒 Panel del refugio</a>
+</header>
+
+<footer th:fragment="pie" class="pie">
+    <p><strong>Las Cobras</strong> · Adopción responsable. <strong>No vendemos animales.</strong></p>
+    <p>Adoptar es un compromiso de 10 a 15 años o más. Tómate tu tiempo para decidir.</p>
+</footer>
+
+<ol th:fragment="pasos(actual)" class="pasos" aria-label="Proceso de adopción">
+    <li th:each="paso, i : ${pasos}"
+        th:classappend="${i.index < actual ? 'hecho' : (i.index == actual ? 'actual' : '')}">
+        <span class="numero" th:text="${i.index < actual ? '✓' : paso.numero()}">1</span>
+        <strong th:text="${paso.titulo()}">Conoce</strong>
+        <small th:text="${paso.detalle()}">Catálogo e historias</small>
+    </li>
+</ol>
+
+<article th:fragment="tarjeta(v)" class="tarjeta-mascota">
+    <div class="mascota-encabezado">
+        <span class="emoji" th:text="${v.emoji()}">🐶</span>
+        <div>
+            <h3 th:text="|${v.mascota().nombre()} ${v.sexo()}|">Canela ♀</h3>
+            <span class="insignia" th:classappend="|estado-${v.estado().valor()}|"
+                  th:text="${v.etiquetaEstado()}">Disponible</span>
+        </div>
+    </div>
+    <ul class="etiquetas">
+        <li th:text="|🎂 ${v.mascota().edad()} · ${v.etapa()}|">🎂 2 años · Adulto</li>
+        <li th:text="|📏 ${v.tamano()}|">📏 Mediano</li>
+        <li th:text="|⚡ Energía ${v.mascota().energia()}|">⚡ Energía media</li>
+    </ul>
+    <p class="ideal" th:text="|Ideal para: ${v.mascota().idealPara()}|">Ideal para: familias tranquilas</p>
+    <details>
+        <summary>Historia y salud</summary>
+        <p th:text="${v.mascota().historia()}">Historia del rescatado.</p>
+        <ul class="ficha">
+            <li th:text="|💉 Vacunas: ${v.mascota().vacunas()}|"></li>
+            <li th:text="|✂️ Esterilizado: ${v.mascota().esterilizado() ? 'sí' : 'aún no'}|"></li>
+            <li th:text="|🏢 Departamento: ${v.mascota().aptoDepartamento() ? 'sí' : 'necesita más espacio'}|"></li>
+            <li th:text="|🤝 Convive con: ${v.convive()}|"></li>
+        </ul>
+    </details>
+    <a th:if="${!v.adoptado()}" class="btn btn-primario" th:href="@{/solicitud(mascotaId=${v.mascota().id()})}">
+        📝 Postular
+    </a>
+    <span th:if="${v.adoptado()}" class="btn deshabilitado">Ya encontró hogar</span>
+</article>
+
+</body>
+</html>

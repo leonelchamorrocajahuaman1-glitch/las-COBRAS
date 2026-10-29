@@ -109,3 +109,11 @@ python -m pytest
 ```
 
 Cubren el algoritmo de compatibilidad, los filtros, la validación del formulario, el flujo de estados (una mascota aprobada queda adoptada y no acepta nuevas solicitudes), la validación de las herramientas y el ciclo de herramientas del bot con un cliente falso, que no usa la API ni gasta saldo.
+
+## Versión Java (opcional)
+
+En [`java/`](java/README.md) hay una versión equivalente con **Spring Boot + Thymeleaf + SQLite**
+que comparte el catálogo (`data/mascotas.json`) y las mismas reglas de negocio. La app Python
+sigue siendo la principal; la versión Java se ejecuta aparte con `./mvnw spring-boot:run`
+(requiere JDK 25) y corre en otro puerto si la app Python ya usa el 8080.
+

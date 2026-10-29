@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Solicitud enviada')}"></head>
+<body>
+<header th:replace="~{fragmentos :: navegacion('solicitud')}"></header>
+
+<main class="contenedor">
+    <section class="panel exito">
+        <h1>¡Solicitud enviada! 🎉</h1>
+        <p>Tu código de seguimiento es</p>
+        <p class="codigo" th:text="${codigo}">LC-1A2B3C</p>
+        <p>
+            Guárdalo: con él y tu DNI puedes ver el estado de tu solicitud en
+            <strong>Mi solicitud</strong>. Te contactaremos por celular en un plazo de 2 a 3 días hábiles.
+        </p>
+        <div class="fila-acciones">
+            <a class="btn btn-primario" th:href="@{/mi-solicitud(codigo=${codigo})}">🔍 Ver mi solicitud</a>
+            <a class="btn btn-secundario" th:href="@{/catalogo}">Volver al catálogo</a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos :: pie}"></footer>
+</body>
+</html>

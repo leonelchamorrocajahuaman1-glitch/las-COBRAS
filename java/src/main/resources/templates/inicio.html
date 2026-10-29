@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Inicio')}"></head>
+<body>
+<header th:replace="~{fragmentos :: navegacion('inicio')}"></header>
+
+<main class="contenedor">
+    <section class="hero">
+        <p class="sello">Adopción responsable · Lima, Perú</p>
+        <h1>Encuentra a tu compañero para toda la vida</h1>
+        <p class="hero-texto">
+            Conectamos animales rescatados con familias que les darán un hogar para siempre.
+            <strong>Aquí no se compran mascotas: se adoptan.</strong>
+        </p>
+        <div class="fila-acciones">
+            <a class="btn btn-primario" th:href="@{/test}">🧪 Hacer el test de compatibilidad</a>
+            <a class="btn btn-secundario" th:href="@{/catalogo}">🐾 Ver todas las mascotas</a>
+        </div>
+        <p class="nota">El test son 8 preguntas y no necesita IA. Si ya sabes a quién quieres, ve directo al catálogo.</p>
+    </section>
+
+    <section class="metricas" aria-label="Cifras del refugio">
+        <div class="metrica">
+            <strong th:text="${disponibles}">6</strong>
+            <span>Mascotas buscando hogar</span>
+        </div>
+        <div class="metrica">
+            <strong th:text="${adoptadas}">0</strong>
+            <span>Adopciones concretadas</span>
+        </div>
+        <div class="metrica">
+            <strong th:text="${solicitudes}">0</strong>
+            <span>Solicitudes recibidas</span>
+        </div>
+    </section>
+
+    <h2>¿Por dónde empiezo?</h2>
+    <div class="rejilla-3">
+        <a class="panel enlace-panel" th:href="@{/test}">
+            <h3>🧪 Haz el test</h3>
+            <p class="nota">8 preguntas y te decimos qué mascota encaja con tu estilo de vida.</p>
+            <span class="enlace">Empezar el test →</span>
+        </a>
+        <a class="panel enlace-panel" th:href="@{/catalogo}">
+            <h3>🐾 Explora el catálogo</h3>
+            <p class="nota">Conoce sus historias, edades y necesidades antes de decidir.</p>
+            <span class="enlace">Ver mascotas →</span>
+        </a>
+        <a class="panel enlace-panel" th:href="@{/mi-solicitud}">
+            <h3>🔍 Sigue tu solicitud</h3>
+            <p class="nota">¿Ya postulaste? Consulta el estado con tu código y tu DNI.</p>
+            <span class="enlace">Consultar estado →</span>
+        </a>
+    </div>
+
+    <h2>Cómo es el proceso</h2>
+    <div th:replace="~{fragmentos :: pasos(0)}"></div>
+
+    <h2>Te están esperando</h2>
+    <th:block th:if="${!destacadas.isEmpty()}">
+        <div class="rejilla-mascotas">
+            <th:block th:each="v : ${destacadas}">
+                <div th:replace="~{fragmentos :: tarjeta(${v})}"></div>
+            </th:block>
+        </div>
+        <div class="fila-acciones">
+            <span class="nota" th:text="|Mostramos 3 de ${disponibles} mascotas disponibles.|"></span>
+            <a class="btn btn-secundario" th:href="@{/catalogo}">Ver todas</a>
+        </div>
+    </th:block>
+    <div class="aviso aviso-info" th:if="${destacadas.isEmpty()}">
+        ¡Todas nuestras mascotas encontraron hogar! Vuelve pronto: llegan rescatados cada semana. 💛
+    </div>
+
+    <div class="aviso aviso-alerta">
+        💛 Adoptar es un compromiso de <strong>10 a 15 años o más</strong>. Tómate tu tiempo para decidir.
+    </div>
+</main>
+
+<footer th:replace="~{fragmentos :: pie}"></footer>
+</body>
+</html>

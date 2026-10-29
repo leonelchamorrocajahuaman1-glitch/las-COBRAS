@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Mi solicitud')}"></head>
+<body>
+<header th:replace="~{fragmentos :: navegacion('mi-solicitud')}"></header>
+
+<main class="contenedor">
+    <h1>🔍 Mi solicitud</h1>
+    <p class="subtitulo">Consulta el estado de tu solicitud con el código que recibiste y tu DNI.</p>
+    <div th:replace="~{fragmentos :: pasos(3)}"></div>
+
+    <form class="panel" method="post" th:action="@{/mi-solicitud}">
+        <div class="rejilla-2">
+            <label>Código de seguimiento
+                <input name="codigo" th:value="${codigo}" placeholder="LC-1A2B3C" autocomplete="off" required>
+            </label>
+            <label>DNI o carné de extranjería
+                <input name="documento" th:value="${documento}" autocomplete="off" required>
+            </label>
+        </div>
+        <div class="aviso aviso-error" th:if="${error}" th:text="${error}"></div>
+        <button class="btn btn-primario" type="submit">Consultar</button>
+    </form>
+
+    <section class="panel" th:if="${solicitud != null}">
+        <h2 th:text="|Solicitud ${solicitud.codigo()} · ${solicitud.mascotaNombre()}|">Solicitud LC-1A2B3C · Canela</h2>
+        <p><strong>Estado:</strong> <span th:text="${solicitud.estado().etiqueta()}">🕒 Pendiente de revisión</span></p>
+
+        <div class="aviso aviso-alerta" th:if="${solicitud.estado().valor() == 'rechazada'}">
+            Esta vez no pudimos aprobar tu solicitud. Puedes postular por otra mascota cuando quieras. 💛
+        </div>
+
+        <th:block th:unless="${solicitud.estado().valor() == 'rechazada'}">
+            <ol class="mini-pasos">
+                <li th:classappend="${pasoActual >= 0 ? 'hecho' : ''}">Recibida</li>
+                <li th:classappend="${pasoActual >= 1 ? 'hecho' : ''}">Entrevista</li>
+                <li th:classappend="${pasoActual >= 2 ? 'hecho' : ''}">¡Aprobada!</li>
+            </ol>
+            <div class="progreso"><span th:style="|width: ${(pasoActual + 1) * 33}%|"></span></div>
+            <div class="aviso aviso-exito" th:if="${solicitud.estado().valor() == 'aprobada'}">
+                ¡Felicidades! Te contactaremos para coordinar la firma del contrato y la entrega. 🏡
+            </div>
+        </th:block>
+
+        <div class="aviso aviso-info" th:if="${!#strings.isEmpty(solicitud.notaRefugio())}">
+            <strong>Mensaje del refugio:</strong>
+            <span th:text="${solicitud.notaRefugio()}">Te llamamos el lunes.</span>
+        </div>
+
+        <p class="nota"
+           th:text="|Enviada: ${#strings.substring(solicitud.creadaEn(), 0, 10)} · Última actualización: ${#strings.substring(solicitud.actualizadaEn(), 0, 10)}|">
+        </p>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos :: pie}"></footer>
+</body>
+</html>

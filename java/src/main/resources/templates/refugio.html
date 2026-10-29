@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Panel del refugio')}"></head>
+<body>
+<header th:replace="~{fragmentos :: navegacion('refugio')}"></header>
+
+<main class="contenedor">
+    <div class="cabecera-panel">
+        <div>
+            <h1>🔒 Panel del refugio</h1>
+            <p class="subtitulo">Gestiona solicitudes y el estado de las mascotas.</p>
+        </div>
+        <form method="post" th:action="@{/refugio/salir}">
+            <button class="btn btn-secundario" type="submit">Cerrar sesión</button>
+        </form>
+    </div>
+
+    <div class="aviso aviso-exito" th:if="${aviso}" th:text="${aviso}"></div>
+    <div class="aviso aviso-error" th:if="${avisoError}" th:text="${avisoError}"></div>
+
+    <section class="metricas metricas-4" aria-label="Resumen">
+        <div class="metrica">
+            <strong th:text="${stats.solicitudes()}">0</strong>
+            <span>Solicitudes</span>
+        </div>
+        <div class="metrica">
+            <strong th:text="${porRevisar}">0</strong>
+            <span>Por revisar</span>
+        </div>
+        <div class="metrica">
+            <strong th:text="${enEntrevista}">0</strong>
+            <span>En entrevista</span>
+        </div>
+        <div class="metrica">
+            <strong th:text="${stats.adoptadas()}">0</strong>
+            <span>Adopciones</span>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>📥 Solicitudes</h2>
+        <div class="chips">
+            <a class="chip" th:classappend="${filtro == 'todas'} ? 'activo'" th:href="@{/refugio}">Todas</a>
+            <a class="chip" th:each="e : ${estadosSolicitud}"
+               th:classappend="${filtro == e.valor()} ? 'activo'"
+               th:href="@{/refugio(estado=${e.valor()})}"
+               th:text="${e.etiqueta()}">Pendiente</a>
+        </div>
+
+        <p class="nota" th:if="${solicitudes.isEmpty()}">No hay solicitudes en esta categoría.</p>
+
+        <details th:each="s : ${solicitudes}" th:open="${s.estado().valor() == 'pendiente'}">
+            <summary th:text="|${s.codigo()} · ${s.mascotaNombre()} · ${s.nombre()} · ${s.estado().etiqueta()}|"></summary>
+            <div class="rejilla-2 datos-solicitud">
+                <p th:text="|DNI: ${s.documento()}|"></p>
+                <p th:text="|Celular: ${s.telefono()}|"></p>
+                <p th:text="|Correo: ${#strings.isEmpty(s.email()) ? '—' : s.email()}|"></p>
+                <p th:text="|Distrito: ${s.distrito()}|"></p>
+                <p th:text="|Vivienda: ${s.vivienda()}|"></p>
+                <p th:text="|Enviada: ${#strings.replace(#strings.substring(s.creadaEn(), 0, 16), 'T', ' ')} (UTC)|"></p>
+            </div>
+            <p th:text="|Motivo: ${s.motivo()}|"></p>
+
+            <form method="post" th:action="@{/refugio/solicitudes/{codigo}(codigo=${s.codigo()})}" class="fila-form">
+                <label>Estado
+                    <select name="estado">
+                        <option th:each="e : ${estadosSolicitud}"
+                                th:value="${e.valor()}"
+                                th:selected="${e == s.estado()}"
+                                th:text="${e.etiqueta()}"></option>
+                    </select>
+                </label>
+                <label class="crece">Mensaje para el solicitante (lo verá en «Mi solicitud»)
+                    <input name="nota" th:value="${s.notaRefugio()}" maxlength="500">
+                </label>
+                <button class="btn btn-primario" type="submit">Guardar</button>
+            </form>
+        </details>
+    </section>
+
+    <section class="panel">
+        <h2>🐾 Mascotas</h2>
+        <p class="nota">El estado cambia solo al aprobar o rechazar solicitudes, pero puedes corregirlo aquí.</p>
+        <form th:each="v : ${mascotas}" method="post"
+              th:action="@{/refugio/mascotas/{id}(id=${v.mascota().id()})}" class="fila-mascota">
+            <span th:text="|${v.emoji()} ${v.mascota().nombre()} · ${v.mascota().edad()} · ${v.mascota().tamano()}|"></span>
+            <select name="estado">
+                <option th:each="e : ${estadosMascota}"
+                        th:value="${e.valor()}"
+                        th:selected="${e == v.estado()}"
+                        th:text="${e.etiqueta()}"></option>
+            </select>
+            <button class="btn btn-secundario" type="submit">Guardar</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>⬇️ Exportar</h2>
+        <p>Descarga todas las solicitudes en CSV (se abre directamente en Excel).</p>
+        <a class="btn btn-primario" th:href="@{/refugio/exportar.csv}">Descargar solicitudes (CSV)</a>
+        <p class="nota" th:text="|${stats.solicitudes()} solicitud(es) registradas.|"></p>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos :: pie}"></footer>
+</body>
+</html>

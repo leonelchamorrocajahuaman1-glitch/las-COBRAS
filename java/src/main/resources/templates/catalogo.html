@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Catálogo')}"></head>
+<body>
+<header th:replace="~{fragmentos :: navegacion('catalogo')}"></header>
+
+<main class="contenedor">
+    <h1>🐾 Catálogo de mascotas</h1>
+    <p class="subtitulo">
+        Todos están vacunados según su edad, desparasitados y con historia conocida.
+    </p>
+    <div th:replace="~{fragmentos :: pasos(0)}"></div>
+
+    <form class="panel filtros" method="get" th:action="@{/catalogo}">
+        <div class="filtros-cabecera">
+            <div>
+                <h2 class="sin-margen">Filtros</h2>
+                <p class="nota">¿No sabes a quién elegir? El test te orienta con 8 preguntas rápidas.</p>
+            </div>
+            <a class="btn btn-secundario" th:href="@{/test}">🧪 Hacer el test</a>
+        </div>
+
+        <div class="rejilla-filtros">
+            <label>Especie
+                <select name="especie">
+                    <option value="" th:selected="${especie == ''}">Todos</option>
+                    <option value="perro" th:selected="${especie == 'perro'}">Perros</option>
+                    <option value="gato" th:selected="${especie == 'gato'}">Gatos</option>
+                </select>
+            </label>
+            <fieldset>
+                <legend>Tamaño</legend>
+                <label class="casilla" th:each="t : ${tamanos}">
+                    <input type="checkbox" name="tamano" th:value="${t}" th:checked="${tamanosSel.contains(t)}">
+                    <span th:text="${#strings.capitalize(t)}">Grande</span>
+                </label>
+            </fieldset>
+            <fieldset>
+                <legend>Edad</legend>
+                <label class="casilla" th:each="e : ${etapas}">
+                    <input type="checkbox" name="etapa" th:value="${e}" th:checked="${etapasSel.contains(e)}">
+                    <span th:text="${#strings.capitalize(e)}">Adulto</span>
+                </label>
+            </fieldset>
+            <fieldset>
+                <legend>Energía</legend>
+                <label class="casilla" th:each="n : ${niveles}">
+                    <input type="checkbox" name="energia" th:value="${n}" th:checked="${energiasSel.contains(n)}">
+                    <span th:text="${#strings.capitalize(n)}">Media</span>
+                </label>
+            </fieldset>
+        </div>
+
+        <div class="interruptores">
+            <label class="casilla">
+                <input type="checkbox" name="ninos" value="true" th:checked="${ninos}">
+                <span>Apto para niños</span>
+            </label>
+            <label class="casilla">
+                <input type="checkbox" name="depa" value="true" th:checked="${depa}">
+                <span>Apto para departamento</span>
+            </label>
+            <label class="casilla">
+                <input type="checkbox" name="adoptados" value="true" th:checked="${adoptados}">
+                <span>Mostrar ya adoptados</span>
+            </label>
+        </div>
+
+        <div class="fila-acciones">
+            <button class="btn btn-primario" type="submit">Aplicar filtros</button>
+            <a class="btn btn-secundario" th:href="@{/catalogo}">Limpiar</a>
+        </div>
+    </form>
+
+    <p class="resultado-conteo">
+        <strong th:text="${vistas.size()}">6</strong>
+        <span th:text="${vistas.size() == 1 ? 'mascota encontrada' : 'mascotas encontradas'}">mascotas encontradas</span>
+    </p>
+
+    <div class="rejilla-mascotas" th:if="${!vistas.isEmpty()}">
+        <th:block th:each="v : ${vistas}">
+            <div th:replace="~{fragmentos :: tarjeta(${v})}"></div>
+        </th:block>
+    </div>
+
+    <th:block th:if="${vistas.isEmpty()}">
+        <div class="aviso aviso-alerta">
+            No hay mascotas con esos filtros. Prueba quitando alguno o pregúntale a AdoptaBot. 🐾
+        </div>
+        <div class="fila-acciones">
+            <a class="btn btn-primario" th:href="@{/test}">🧪 Hacer el test de compatibilidad</a>
+            <a class="btn btn-secundario" th:href="@{/catalogo}">Quitar filtros</a>
+        </div>
+    </th:block>
+</main>
+
+<footer th:replace="~{fragmentos :: pie}"></footer>
+</body>
+</html>

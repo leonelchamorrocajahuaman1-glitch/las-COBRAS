@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Panel del refugio')}"></head>
+<body>
+<header th:replace="~{fragmentos :: navegacion('refugio')}"></header>
+
+<main class="contenedor">
+    <h1>🔒 Panel del refugio</h1>
+    <p class="subtitulo">Solo el equipo de Las Cobras puede ver y gestionar las solicitudes.</p>
+
+    <div class="aviso aviso-error" th:if="${bloqueado}">
+        Demasiados intentos fallidos. Reinicia la sesión del navegador para intentarlo de nuevo.
+    </div>
+
+    <form class="panel panel-angosto" th:unless="${bloqueado}" method="post" th:action="@{/refugio/entrar}">
+        <label>Contraseña del refugio
+            <input type="password" name="contrasena" autocomplete="current-password" required>
+        </label>
+        <div class="aviso aviso-error" th:if="${error}" th:text="${error}"></div>
+        <button class="btn btn-primario btn-ancho" type="submit">Entrar</button>
+    </form>
+
+    <div class="aviso aviso-info" th:unless="${configurado}">
+        Configura la variable de entorno <code>ADMIN_PASSWORD</code> para habilitar el panel.
+    </div>
+</main>
+
+<footer th:replace="~{fragmentos :: pie}"></footer>
+</body>
+</html>

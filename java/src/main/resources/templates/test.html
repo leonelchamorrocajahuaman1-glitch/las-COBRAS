@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Test de compatibilidad')}"></head>
+<body>
+<header th:replace="~{fragmentos :: navegacion('test')}"></header>
+
+<main class="contenedor">
+    <h1>🧪 Test de compatibilidad</h1>
+    <p class="subtitulo">
+        Responde 8 preguntas y te diremos qué mascotas encajan mejor con tu vida. Es gratis y no usa IA.
+    </p>
+    <div th:replace="~{fragmentos :: pasos(1)}"></div>
+
+    <form class="panel" method="post" th:action="@{/test}" th:object="${perfil}">
+        <fieldset class="bloque">
+            <legend>1. Qué buscas</legend>
+            <div class="opciones">
+                <span class="etiqueta-grupo">¿Qué te gustaría adoptar?</span>
+                <label class="casilla"><input type="radio" th:field="*{especie}" value="cualquiera"> Me da igual</label>
+                <label class="casilla"><input type="radio" th:field="*{especie}" value="perro"> Perro</label>
+                <label class="casilla"><input type="radio" th:field="*{especie}" value="gato"> Gato</label>
+            </div>
+            <div class="opciones">
+                <span class="etiqueta-grupo">¿Dónde vives?</span>
+                <label class="casilla"><input type="radio" th:field="*{vivienda}" value="departamento"> Departamento</label>
+                <label class="casilla"><input type="radio" th:field="*{vivienda}" value="casa"> Casa sin patio</label>
+                <label class="casilla"><input type="radio" th:field="*{vivienda}" value="casa_patio"> Casa con patio</label>
+            </div>
+            <label class="campo-angosto">¿Qué tan activa es tu rutina?
+                <select th:field="*{actividad}">
+                    <option value="baja">🛋️ Tranquila</option>
+                    <option value="media">🚶 Moderada</option>
+                    <option value="alta">🏃 Muy activa</option>
+                </select>
+            </label>
+        </fieldset>
+
+        <fieldset class="bloque">
+            <legend>2. Tu rutina</legend>
+            <label class="campo-angosto">¿Cuántas horas al día estaría sola la mascota?
+                <input type="number" min="0" max="12" th:field="*{horasFuera}">
+            </label>
+        </fieldset>
+
+        <fieldset class="bloque">
+            <legend>3. Tu hogar hoy</legend>
+            <div class="interruptores">
+                <label class="casilla"><input type="checkbox" th:field="*{ninos}"> Hay niños en casa</label>
+                <label class="casilla"><input type="checkbox" th:field="*{otrosPerros}"> Tengo perros</label>
+                <label class="casilla"><input type="checkbox" th:field="*{otrosGatos}"> Tengo gatos</label>
+                <label class="casilla"><input type="checkbox" th:field="*{experiencia}"> Ya tuve mascotas</label>
+            </div>
+        </fieldset>
+
+        <button class="btn btn-primario btn-ancho" type="submit">Ver mis resultados</button>
+    </form>
+
+    <section th:if="${resultados != null}">
+        <h2>Tus mejores coincidencias</h2>
+        <div class="aviso aviso-info" th:if="${!resultados.isEmpty()}">
+            Siguiente paso: elige una mascota y envía tu solicitud. El refugio te contactará para la entrevista.
+        </div>
+        <div class="aviso aviso-alerta" th:if="${resultados.isEmpty()}">
+            Ahora no tenemos una mascota que encaje con tu perfil. ¡Vuelve pronto, llegan rescatados cada semana!
+        </div>
+
+        <article class="panel resultado" th:each="r, i : ${resultados}">
+            <h3>
+                <span th:text="${medallas[i.index]}">🥇</span>
+                <span th:text="${emojiEspecie.getOrDefault(r.mascota().especie(), '🐾')}">🐶</span>
+                <span th:text="${r.mascota().nombre()}">Canela</span> ·
+                <span th:text="${r.puntaje()}">90</span>% compatible
+            </h3>
+            <div class="progreso"><span th:style="|width: ${r.puntaje()}%|"></span></div>
+            <ul class="lista-razones">
+                <li th:each="razon : ${r.razones()}" th:text="|✅ ${razon}|"></li>
+                <li class="alerta" th:each="alerta : ${r.alertas()}" th:text="|⚠️ ${alerta}|"></li>
+            </ul>
+            <div class="fila-acciones">
+                <a class="btn btn-primario" th:href="@{/solicitud(mascotaId=${r.mascota().id()})}">
+                    📝 Postular por esta mascota
+                </a>
+                <a class="btn btn-secundario" th:href="@{/catalogo}">Ver ficha completa</a>
+            </div>
+        </article>
+
+        <p class="nota">El puntaje es orientativo. En la entrevista el equipo del refugio te ayudará a decidir.</p>
+
+        <div class="fila-acciones">
+            <a class="btn btn-secundario" th:href="@{/catalogo}">🐾 Ver todas las mascotas</a>
+            <a class="btn btn-secundario" th:href="@{/test}">🔁 Repetir el test</a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos :: pie}"></footer>
+</body>
+</html>

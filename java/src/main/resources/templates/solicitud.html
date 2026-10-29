@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Solicitud de adopción')}"></head>
+<body>
+<header th:replace="~{fragmentos :: navegacion('solicitud')}"></header>
+
+<main class="contenedor">
+    <h1>📝 Solicitud de adopción</h1>
+    <p class="subtitulo">
+        Completa el formulario. El equipo del refugio revisará tu solicitud y te contactará para una entrevista.
+    </p>
+    <div th:replace="~{fragmentos :: pasos(2)}"></div>
+
+    <div class="aviso aviso-info" th:if="${sinMascotas}">
+        ¡Todas nuestras mascotas encontraron hogar! Vuelve pronto. 💛
+        <a th:href="@{/catalogo}">Ver el catálogo</a>
+    </div>
+
+    <form class="panel" th:unless="${sinMascotas}" method="post" th:action="@{/solicitud}" th:object="${datos}">
+        <div class="aviso aviso-error" th:if="${error}" th:text="${error}"></div>
+
+        <label>¿A quién quieres adoptar?
+            <select name="mascotaId" required>
+                <option th:each="v : ${opciones}"
+                        th:value="${v.mascota().id()}"
+                        th:selected="${v.mascota().id() == seleccion}"
+                        th:text="|${v.emoji()} ${v.mascota().nombre()} · ${v.mascota().edad()} · ${v.etiquetaEstado()}|"></option>
+            </select>
+        </label>
+
+        <div class="aviso aviso-info" th:if="${seleccionada != null and seleccionada.enProceso()}">
+            Otra familia ya está en entrevista con <strong th:text="${seleccionada.mascota().nombre()}">Canela</strong>,
+            pero puedes postular igual.
+        </div>
+
+        <div class="rejilla-2">
+            <label>Nombre y apellido *
+                <input th:field="*{nombre}" autocomplete="name" required>
+            </label>
+            <label>DNI o carné de extranjería *
+                <input th:field="*{documento}" maxlength="12" autocomplete="off" required>
+            </label>
+            <label>Celular *
+                <input th:field="*{telefono}" placeholder="987654321" maxlength="12" autocomplete="tel" required>
+            </label>
+            <label>Correo electrónico (opcional)
+                <input type="email" th:field="*{email}" autocomplete="email">
+            </label>
+            <label>Distrito / ciudad *
+                <input th:field="*{distrito}" autocomplete="address-level2" required>
+            </label>
+            <label>Tipo de vivienda *
+                <select th:field="*{vivienda}">
+                    <option value="Departamento">Departamento</option>
+                    <option value="Casa sin patio">Casa sin patio</option>
+                    <option value="Casa con patio">Casa con patio</option>
+                </select>
+            </label>
+        </div>
+
+        <label>¿Por qué quieres adoptar? Cuéntanos de tu hogar y tu rutina *
+            <textarea th:field="*{motivo}" rows="4" required maxlength="1200"
+                      placeholder="Ej.: Vivimos 3 personas, trabajo desde casa y tenemos tiempo para pasearlo dos veces al día…"></textarea>
+        </label>
+        <p class="nota">Mínimo 30 caracteres: nos ayuda a conocer tu hogar antes de la entrevista.</p>
+
+        <label class="casilla compromiso">
+            <input type="checkbox" th:field="*{aceptaCompromiso}">
+            <span>
+                Me comprometo a cuidarlo toda su vida (10 a 15+ años), llevarlo al veterinario,
+                esterilizarlo si aún no lo está y permitir visitas de seguimiento del refugio.
+            </span>
+        </label>
+
+        <button class="btn btn-primario btn-ancho" type="submit">Enviar solicitud</button>
+        <p class="nota">🔒 Tus datos solo los ve el equipo del refugio. Nunca te pediremos contraseñas ni datos bancarios.</p>
+    </form>
+</main>
+
+<footer th:replace="~{fragmentos :: pie}"></footer>
+</body>
+</html>
