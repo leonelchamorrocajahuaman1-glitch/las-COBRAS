@@ -45,7 +45,7 @@ las-COBRAS/
 │   ├── solicitudes.py      # Solicitudes y estados en SQLite
 │   └── interfaz.py         # Tarjetas y piezas de UI compartidas
 ├── data/mascotas.json      # Catálogo de mascotas
-├── tests/                  # 34 pruebas automáticas (pytest)
+├── tests/                  # Pruebas automáticas (pytest)
 ├── cli.py                  # Chat en la terminal
 └── requirements.txt
 ```
