@@ -38,6 +38,7 @@ def configurar_headers_seguridad() -> None:
             <meta http-equiv="X-Frame-Options" content="DENY">
             <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
             <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;">
             """,
             unsafe_allow_html=True,
         )

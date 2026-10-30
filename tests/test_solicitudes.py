@@ -38,6 +38,29 @@ def test_crear_y_consultar_con_codigo_y_documento(repo):
     assert repo.consultar(codigo, "99999999") is None, "sin el documento correcto no se ven los datos"
 
 
+def test_consulta_rechaza_formatos_imposibles(repo):
+    codigo = repo.crear_solicitud(CANELA, DATOS)
+    assert repo.consultar("LC-123", DATOS["documento"]) is None
+    assert repo.consultar(codigo, "documento-demasiado-largo") is None
+
+
+@pytest.mark.parametrize("campo, valor", [
+    ("nombre", "A" * 101),
+    ("email", "a" * 250 + "@x.pe"),
+    ("distrito", "A" * 101),
+    ("motivo", "A" * 2_001),
+])
+def test_limita_campos_persistidos(repo, campo, valor):
+    with pytest.raises(SolicitudInvalida, match="no puede superar"):
+        repo.crear_solicitud(CANELA, {**DATOS, campo: valor})
+
+
+def test_limita_nota_del_refugio(repo):
+    codigo = repo.crear_solicitud(CANELA, DATOS)
+    with pytest.raises(ValueError, match="no puede superar"):
+        repo.actualizar_estado(codigo, "entrevista", "A" * 2_001)
+
+
 def test_no_duplica_solicitudes_activas(repo):
     repo.crear_solicitud(CANELA, DATOS)
     with pytest.raises(SolicitudInvalida, match="Ya tienes una solicitud"):
